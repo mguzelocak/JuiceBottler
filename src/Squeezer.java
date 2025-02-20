@@ -1,74 +1,102 @@
-import java.util.Map;
-
+/**
+ * The {@code Squeezer} class is responsible for squeezing oranges in a separate thread.
+ * It retrieves peeled oranges from a mailbox, processes them, and stores them in a squeezed mailbox.
+ * This class implements the {@code Runnable} interface to allow execution in a separate thread.
+ */
 public class Squeezer implements Runnable {
-    // Thread instance to handle fetching in a separate thread
-    private final Thread thread;
-    // Counter to track the number of oranges fetched
-    private int orangesSqueezed;
-    // Flag to control whether the thread should continue working
-    private volatile boolean timeToWork;
-    // Reference to an Orange object
-//    private final Orange orange;
 
-//    public BlockingMailBox mailBox;
+    /**
+     * Thread instance to handle squeezing in a separate thread.
+     */
+    private final Thread thread;
+
+    /**
+     * Counter to track the number of oranges squeezed.
+     */
+    private int orangesSqueezed;
+
+    /**
+     * Flag to control whether the thread should continue working.
+     */
+    private volatile boolean timeToWork;
+
+    /**
+     * Shared mailbox from which peeled oranges are retrieved.
+     */
     private final BlockingMailBox peeledMailBox;
+
+    /**
+     * Shared mailbox where squeezed oranges are stored.
+     */
     private final BlockingMailBox squeezedMailBox;
 
-
-    // Constructor to initialize the Fetcher with a thread number and an Orange instance
+    /**
+     * Constructs a new Squeezer with specified mailboxes.
+     * Initializes the thread and sets the initial count of squeezed oranges to zero.
+     *
+     * @param peeledMailBox The mailbox containing peeled oranges.
+     * @param squeezedMailBox The mailbox where squeezed oranges will be stored.
+     */
     Squeezer(BlockingMailBox peeledMailBox, BlockingMailBox squeezedMailBox) {
-//        this.orange = mailBox.get();
         orangesSqueezed = 0;
         this.peeledMailBox = peeledMailBox;
         this.squeezedMailBox = squeezedMailBox;
-        // Create a new thread and assign a unique name using threadNum
-        thread = new Thread(this, "Squeezer ");
+        thread = new Thread(this, "Squeezer");
     }
 
-    // Method to stop fetching by setting the flag to false
+    /**
+     * Stops the squeezing process by setting the flag to {@code false}.
+     * Clears the squeezed mailbox and inserts a {@code null} value to indicate termination.
+     */
     public void stopSqueezer() {
         timeToWork = false;
         while (!squeezedMailBox.isEmpty()) {
             squeezedMailBox.get();
         }
         squeezedMailBox.put(null);
-
-//        thread.interrupt();
     }
 
-    // Method to start fetching by setting the flag to true and starting the thread
+    /**
+     * Starts the squeezing process by setting the flag to {@code true} and starting the thread.
+     */
     public void startSqueezer() {
         timeToWork = true;
         thread.start();
     }
 
-    // Method to wait until the thread stops execution
+    /**
+     * Waits for the thread to stop execution by joining it.
+     * If the thread is interrupted, an error message is printed.
+     */
     public void waitToStop() {
         try {
-            thread.join(); // Ensures that the calling thread waits for this thread to finish
+            thread.join();
         } catch (InterruptedException e) {
-            System.err.println(thread.getName() + " stop malfunction"); // Handles interruptions
+            System.err.println(thread.getName() + " stop malfunction");
         }
     }
 
-    // The run method defines what the thread will execute
+    /**
+     * Defines the main execution logic for the squeezing thread.
+     * Continuously retrieves and squeezes oranges while {@code timeToWork} is {@code true}.
+     */
+    @Override
     public void run() {
-
-        // Continue fetching while timeToWork is true
         while (timeToWork) {
             Orange orange = peeledMailBox.get();
-//            if (orange == null) break;
             squeezeOrange(orange);
             System.out.println(Thread.currentThread().getName() + " Squeezing oranges ");
-//            mailBox.put(orange);
             orangesSqueezed++;
         }
         System.out.println(Thread.currentThread().getName() + " Done");
     }
 
-    // Method to fetch an orange if it is not already fetched
+    /**
+     * Squeezes an orange and moves it to the squeezed mailbox if it is in the peeled state.
+     *
+     * @param o The orange to be squeezed.
+     */
     public void squeezeOrange(Orange o) {
-        // Ensures that the orange is processed only if it is in a fetched state
         while (o.getState() == Orange.State.Squeezed) {
             o.runProcess();
             squeezedMailBox.put(o);
@@ -76,7 +104,11 @@ public class Squeezer implements Runnable {
         orangesSqueezed++; // Increment the counter after processing the orange
     }
 
-    // Getter method to return the number of fetched oranges
+    /**
+     * Gets the total number of oranges squeezed.
+     *
+     * @return The count of squeezed oranges.
+     */
     public int getOrangesSqueezed() {
         return orangesSqueezed;
     }

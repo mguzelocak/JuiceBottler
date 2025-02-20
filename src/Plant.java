@@ -1,35 +1,52 @@
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+/**
+ * The {@code Plant} class simulates an orange juice processing plant.
+ * It consists of multiple stages: fetching, peeling, squeezing, and bottling oranges.
+ * Each stage runs in a separate thread, and the plant processes oranges for a fixed duration.
+ *
+ * The class also provides methods to start, stop, and summarize the processing results.
+ */
 
 public class Plant implements Runnable {
-    // How long do we want to run the juice processing
+
+    /**
+     * Duration for which the juice processing plant runs.
+     */
     public static final long PROCESSING_TIME = 5 * 1000;
 
+    /**
+     * Number of plant instances.
+     */
     private static final int NUM_PLANTS = 2;
+
+    /**
+     * Shared mailboxes for different stages of processing.
+     */
     private final BlockingMailBox fetchedMailBox = new BlockingMailBox();
     private final BlockingMailBox peeledMailBox = new BlockingMailBox();
     private final BlockingMailBox squeezedMailBox = new BlockingMailBox();
 
-
+    /**
+     * Processing components: Fetcher, Peeler, Squeezer, and Bottler.
+     */
     private Fetcher fetcher = new Fetcher(fetchedMailBox);
     private Peeler peeler = new Peeler(fetchedMailBox, peeledMailBox);
     private Squeezer squeezer = new Squeezer(peeledMailBox, squeezedMailBox);
     private Bottler bottler = new Bottler(squeezedMailBox);
 
-
+    /**
+     * Entry point to start multiple plants and summarize results.
+     *
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
-        // Startup the plants
         Plant[] plants = new Plant[NUM_PLANTS];
         for (int i = 0; i < NUM_PLANTS; i++) {
             plants[i] = new Plant(i);
             plants[i].startPlant();
         }
 
-        // Give the plants time to do work
         delay(PROCESSING_TIME, "Plant malfunction");
 
-        // Stop the plant, and wait for it to shutdown
         for (Plant p : plants) {
             p.stopPlant();
         }
@@ -37,7 +54,6 @@ public class Plant implements Runnable {
             p.waitToStop();
         }
 
-        // Summarize the results
         int totalProvided = 0;
         int totalProcessed = 0;
         int totalBottles = 0;
@@ -49,10 +65,15 @@ public class Plant implements Runnable {
             totalWasted += p.getWaste();
         }
         System.out.println("Total provided/processed = " + totalProvided + "/" + totalProcessed);
-        System.out.println("Created " + totalBottles +
-                ", wasted " + totalWasted + " oranges");
+        System.out.println("Created " + totalBottles + ", wasted " + totalWasted + " oranges");
     }
 
+    /**
+     * Delays execution for a specified time.
+     *
+     * @param time Duration in milliseconds.
+     * @param errMsg Error message in case of interruption.
+     */
     private static void delay(long time, String errMsg) {
         long sleepTime = Math.max(1, time);
         try {
@@ -62,13 +83,24 @@ public class Plant implements Runnable {
         }
     }
 
+    /**
+     * Oranges required to produce one bottle of juice.
+     */
     public final int ORANGES_PER_BOTTLE = 3;
 
+    /**
+     * Processing thread for the plant.
+     */
     final Thread thread;
     private int orangesProvided;
     private int orangesProcessed;
     private volatile boolean timeToWork;
 
+    /**
+     * Constructs a new Plant instance.
+     *
+     * @param threadNum Identifier for the plant thread.
+     */
     Plant(int threadNum) {
         fetcher = new Fetcher(fetchedMailBox);
         peeler = new Peeler(fetchedMailBox, peeledMailBox);
@@ -80,24 +112,35 @@ public class Plant implements Runnable {
         thread = new Thread(this, "Plant[" + threadNum + "]");
     }
 
+    /**
+     * Starts the plant's processing.
+     */
     public void startPlant() {
         timeToWork = true;
         thread.start();
     }
 
+    /**
+     * Stops the plant's processing.
+     */
     public void stopPlant() {
         timeToWork = false;
     }
 
+    /**
+     * Waits for the plant's thread to stop execution.
+     */
     public void waitToStop() {
         try {
             thread.join();
         } catch (InterruptedException e) {
             System.err.println(thread.getName() + " stop malfunction");
         }
-
     }
 
+    /**
+     * Executes the plant's processing cycle.
+     */
     public void run() {
         System.out.println(Thread.currentThread().getName() + " Processing oranges ");
         fetcher.startFetcher();
@@ -106,15 +149,15 @@ public class Plant implements Runnable {
         bottler.startBottler();
 
         long startTime = System.currentTimeMillis();
-        long runDuration = 10000; // 10 seconds
-
+        long runDuration = 10000;
         while (System.currentTimeMillis() - startTime < runDuration) {
             try {
-                Thread.sleep(1); // 🔹 Wait to prevent high CPU usage
+                Thread.sleep(1);
             } catch (InterruptedException ignored) {}
         }
-        fetchedMailBox.put(null); // Signal Fetcher to stop
-        peeledMailBox.put(null); // Signal Peeler to stop
+
+        fetchedMailBox.put(null);
+        peeledMailBox.put(null);
         squeezedMailBox.put(null);
         fetcher.stopFetcher();
         peeler.stopPeeler();

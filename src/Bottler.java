@@ -1,48 +1,75 @@
+/**
+ * The {@code Bottler} class is responsible for bottling oranges in a separate thread.
+ * It retrieves squeezed oranges from a mailbox, processes them, and updates the count of bottled oranges.
+ * This class implements the {@code Runnable} interface to allow execution in a separate thread.
+ */
 public class Bottler implements Runnable {
-    // Thread instance to handle fetching in a separate thread
-    private final Thread thread;
-    // Counter to track the number of oranges fetched
-    private int orangesBottled;
-    // Flag to control whether the thread should continue working
-    private volatile boolean timeToWork;
-    // Reference to an Orange object
 
+    /**
+     * Thread instance to handle bottling in a separate thread.
+     */
+    private final Thread thread;
+
+    /**
+     * Counter to track the number of oranges bottled.
+     */
+    private int orangesBottled;
+
+    /**
+     * Flag to control whether the thread should continue working.
+     */
+    private volatile boolean timeToWork;
+
+    /**
+     * Shared mailbox from which squeezed oranges are retrieved.
+     */
     private final BlockingMailBox squeezedMailBox;
 
-
-    // Constructor to initialize the Fetcher with a thread number and an Orange instance
+    /**
+     * Constructs a new Bottler with a specified squeezed mailbox.
+     * Initializes the thread and sets the initial count of bottled oranges to zero.
+     *
+     * @param squeezedMailBox The mailbox containing squeezed oranges.
+     */
     Bottler(BlockingMailBox squeezedMailBox) {
         this.squeezedMailBox = squeezedMailBox;
         orangesBottled = 0;
-        // Create a new thread and assign a unique name using threadNum
-        thread = new Thread(this, "Bottler ");
+        thread = new Thread(this, "Bottler");
     }
 
-    // Method to stop fetching by setting the flag to false
+    /**
+     * Stops the bottling process by setting the flag to {@code false}.
+     */
     public void stopBottler() {
         timeToWork = false;
-//        thread.interrupt();
     }
 
-    // Method to start fetching by setting the flag to true and starting the thread
+    /**
+     * Starts the bottling process by setting the flag to {@code true} and starting the thread.
+     */
     public void startBottler() {
         timeToWork = true;
         thread.start();
     }
 
-    // Method to wait until the thread stops execution
+    /**
+     * Waits for the thread to stop execution by joining it.
+     * If the thread is interrupted, an error message is printed.
+     */
     public void waitToStop() {
         try {
-            thread.join(); // Ensures that the calling thread waits for this thread to finish
+            thread.join();
         } catch (InterruptedException e) {
-            System.err.println(thread.getName() + " stop malfunction"); // Handles interruptions
+            System.err.println(thread.getName() + " stop malfunction");
         }
     }
 
-    // The run method defines what the thread will execute
+    /**
+     * Defines the main execution logic for the bottling thread.
+     * Continuously retrieves and bottles oranges while {@code timeToWork} is {@code true}.
+     */
+    @Override
     public void run() {
-
-        // Continue fetching while timeToWork is true
         while (timeToWork) {
             Orange orange = squeezedMailBox.get();
             bottleOrange(orange);
@@ -51,16 +78,23 @@ public class Bottler implements Runnable {
         System.out.println(Thread.currentThread().getName() + " Done");
     }
 
-    // Method to fetch an orange if it is not already fetched
+    /**
+     * Bottles an orange and updates its state.
+     *
+     * @param o The orange to be bottled.
+     */
     public void bottleOrange(Orange o) {
-        // Ensures that the orange is processed only if it is in a fetched state
         while (o.getState() == Orange.State.Bottled) {
             o.runProcess();
         }
         orangesBottled++; // Increment the counter after processing the orange
     }
 
-    // Getter method to return the number of fetched oranges
+    /**
+     * Gets the total number of oranges bottled.
+     *
+     * @return The count of bottled oranges.
+     */
     public int getOrangesBottled() {
         return orangesBottled;
     }
