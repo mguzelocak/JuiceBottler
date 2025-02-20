@@ -6,9 +6,9 @@ public class Bottler implements Runnable {
     // Flag to control whether the thread should continue working
     private volatile boolean timeToWork;
     // Reference to an Orange object
-//    private final Orange orange;
+
     private final BlockingMailBox squeezedMailBox;
-//    private final BlockingMailBox bottledMailBox;
+
 
     // Constructor to initialize the Fetcher with a thread number and an Orange instance
     Bottler(BlockingMailBox squeezedMailBox) {
@@ -41,13 +41,12 @@ public class Bottler implements Runnable {
 
     // The run method defines what the thread will execute
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " Bottling oranges ");
+
         // Continue fetching while timeToWork is true
         while (timeToWork) {
             Orange orange = squeezedMailBox.get();
-//            if (orange == null) break;
             bottleOrange(orange);
-//            orangesBottled++;
+            System.out.println(Thread.currentThread().getName() + " Bottling oranges ");
         }
         System.out.println(Thread.currentThread().getName() + " Done");
     }

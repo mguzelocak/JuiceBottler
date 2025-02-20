@@ -45,13 +45,14 @@ public class Fetcher implements Runnable {
 
     // The run method defines what the thread will execute
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " Fetching oranges ");
+
         // Continue fetching while timeToWork is true
         while (timeToWork) {
 //            fetchOrange(orange);
             Orange orange = new Orange();
             orange.runProcess();
             fetchedMailBox.put(orange);
+            System.out.println(Thread.currentThread().getName() + " Fetching oranges ");
             orangesFetched++;
         }
         System.out.println(Thread.currentThread().getName() + " Done");

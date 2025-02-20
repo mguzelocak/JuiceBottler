@@ -53,12 +53,13 @@ public class Squeezer implements Runnable {
 
     // The run method defines what the thread will execute
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " Squeezing oranges ");
+
         // Continue fetching while timeToWork is true
         while (timeToWork) {
             Orange orange = peeledMailBox.get();
 //            if (orange == null) break;
             squeezeOrange(orange);
+            System.out.println(Thread.currentThread().getName() + " Squeezing oranges ");
 //            mailBox.put(orange);
             orangesSqueezed++;
         }

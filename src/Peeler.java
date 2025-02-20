@@ -46,12 +46,13 @@ public class Peeler implements Runnable {
 
     // The run method defines what the thread will execute
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " Peeling oranges ");
+
         // Continue fetching while timeToWork is true
         while (timeToWork) {
             Orange orange = fetchedMailBox.get();
             peelOrange(orange);
-            orangesPeeled++;
+            System.out.println(Thread.currentThread().getName() + " Peeling oranges ");
+//            orangesPeeled++;
         }
         System.out.println(Thread.currentThread().getName() + " Done");
     }

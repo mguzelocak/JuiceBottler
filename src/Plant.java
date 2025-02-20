@@ -104,18 +104,13 @@ public class Plant implements Runnable {
         peeler.startPeeler();
         squeezer.startSqueezer();
         bottler.startBottler();
-//        while (timeToWork) {
-//            fetchedMailBox.put(new Orange());
 
-//            orangesProvided++;
-
-//        }
         long startTime = System.currentTimeMillis();
-        long runDuration = 10000; // 5 seconds
+        long runDuration = 10000; // 10 seconds
 
         while (System.currentTimeMillis() - startTime < runDuration) {
             try {
-                Thread.sleep(100); // 🔹 Wait to prevent high CPU usage
+                Thread.sleep(1); // 🔹 Wait to prevent high CPU usage
             } catch (InterruptedException ignored) {}
         }
         fetchedMailBox.put(null); // Signal Fetcher to stop
