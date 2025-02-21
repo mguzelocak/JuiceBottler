@@ -1,7 +1,10 @@
 /**
- * The {@code Bottler} class is responsible for bottling oranges in a separate thread.
+ * Description: The {@code Bottler} class is responsible for bottling oranges in a separate thread.
  * It retrieves squeezed oranges from a mailbox, processes them, and updates the count of bottled oranges.
  * This class implements the {@code Runnable} interface to allow execution in a separate thread.
+ *
+ * @author mcguzelocak
+ * Date: 02/21/2025
  */
 public class Bottler implements Runnable {
 
@@ -9,21 +12,18 @@ public class Bottler implements Runnable {
      * Thread instance to handle bottling in a separate thread.
      */
     private final Thread thread;
-
-    /**
-     * Counter to track the number of oranges bottled.
-     */
-    private int orangesBottled;
-
-    /**
-     * Flag to control whether the thread should continue working.
-     */
-    private volatile boolean timeToWork;
-
     /**
      * Shared mailbox from which squeezed oranges are retrieved.
      */
     private final BlockingMailBox squeezedMailBox;
+    /**
+     * Counter to track the number of oranges bottled.
+     */
+    private int orangesBottled;
+    /**
+     * Flag to control whether the thread should continue working.
+     */
+    private volatile boolean timeToWork;
 
     /**
      * Constructs a new Bottler with a specified squeezed mailbox.
@@ -73,9 +73,9 @@ public class Bottler implements Runnable {
         while (timeToWork) {
             Orange orange = squeezedMailBox.get();
             bottleOrange(orange);
-            System.out.println(Thread.currentThread().getName() + " Bottling oranges ");
+//            System.out.println(Thread.currentThread().getName() + " Bottling oranges ");
         }
-        System.out.println(Thread.currentThread().getName() + " Done");
+//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**

@@ -2,7 +2,8 @@
  * Description: The {@code Fetcher} class is responsible for fetching oranges in a separate thread.
  * It continuously creates and processes oranges, storing them in a shared mailbox.
  * This class implements the {@code Runnable} interface to allow execution in a separate thread.
- * Author: @mguzelocak
+ *
+ * @author mcguzelocak
  * Date: 02/20/2025
  */
 public class Fetcher implements Runnable {
@@ -11,21 +12,18 @@ public class Fetcher implements Runnable {
      * Thread instance to handle fetching in a separate thread.
      */
     private final Thread thread;
-
-    /**
-     * Counter to track the number of oranges fetched.
-     */
-    private int orangesFetched;
-
-    /**
-     * Flag to control whether the thread should continue working.
-     */
-    private volatile boolean timeToWork;
-
     /**
      * Shared mailbox to store fetched oranges.
      */
     private final BlockingMailBox fetchedMailBox;
+    /**
+     * Counter to track the number of oranges fetched.
+     */
+    private int orangesFetched;
+    /**
+     * Flag to control whether the thread should continue working.
+     */
+    private volatile boolean timeToWork;
 
     /**
      * Constructs a new Fetcher with a specified mailbox.
@@ -81,10 +79,10 @@ public class Fetcher implements Runnable {
             Orange orange = new Orange();
             orange.runProcess();
             fetchedMailBox.put(orange);
-            System.out.println(Thread.currentThread().getName() + " Fetching oranges ");
+//            System.out.println(Thread.currentThread().getName() + " Fetching oranges ");
             orangesFetched++;
         }
-        System.out.println(Thread.currentThread().getName() + " Done");
+//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**

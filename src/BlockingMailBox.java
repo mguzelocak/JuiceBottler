@@ -1,8 +1,11 @@
 /**
- * The {@code BlockingMailBox} class is a synchronized mailbox for passing an {@code Orange} object
+ * Description: The {@code BlockingMailBox} class is a synchronized mailbox for passing an {@code Orange} object
  * between different processing stages in a thread-safe manner.
  * It ensures that only one orange is held at a time and uses wait-notify
  * for synchronization between producer and consumer threads.
+ *
+ * @author nwilliams
+ * Date: 02/21/2025
  */
 public class BlockingMailBox {
 

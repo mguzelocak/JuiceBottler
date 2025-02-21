@@ -1,7 +1,10 @@
 /**
- * The {@code Peeler} class is responsible for peeling oranges in a separate thread.
+ * Description: The {@code Peeler} class is responsible for peeling oranges in a separate thread.
  * It retrieves oranges from a fetched mailbox, processes them, and stores them in a peeled mailbox.
  * This class implements the {@code Runnable} interface to allow execution in a separate thread.
+ *
+ * @author mcguzelocak
+ * Date: 02/21/2025
  */
 public class Peeler implements Runnable {
 
@@ -9,32 +12,28 @@ public class Peeler implements Runnable {
      * Thread instance to handle peeling in a separate thread.
      */
     private final Thread thread;
-
+    /**
+     * Shared mailbox from which fetched oranges are retrieved.
+     */
+    private final BlockingMailBox fetchedMailBox;
+    /**
+     * Shared mailbox where peeled oranges are stored.
+     */
+    private final BlockingMailBox peeledMailBox;
     /**
      * Counter to track the number of oranges peeled.
      */
     private int orangesPeeled;
-
     /**
      * Flag to control whether the thread should continue working.
      */
     private volatile boolean timeToWork;
 
     /**
-     * Shared mailbox from which fetched oranges are retrieved.
-     */
-    private final BlockingMailBox fetchedMailBox;
-
-    /**
-     * Shared mailbox where peeled oranges are stored.
-     */
-    private final BlockingMailBox peeledMailBox;
-
-    /**
      * Constructs a new Peeler with specified mailboxes.
      * Initializes the thread and sets the initial count of peeled oranges to zero.
      *
-     * @param fetchedMailBox The mailbox containing fetched oranges.
+     * @param fetchedMailBox  The mailbox containing fetched oranges.
      * @param squeezedMailBox The mailbox where peeled oranges will be stored.
      */
     Peeler(BlockingMailBox fetchedMailBox, BlockingMailBox squeezedMailBox) {
@@ -85,9 +84,9 @@ public class Peeler implements Runnable {
         while (timeToWork) {
             Orange orange = fetchedMailBox.get();
             peelOrange(orange);
-            System.out.println(Thread.currentThread().getName() + " Peeling oranges ");
+//            System.out.println(Thread.currentThread().getName() + " Peeling oranges ");
         }
-        System.out.println(Thread.currentThread().getName() + " Done");
+//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**
