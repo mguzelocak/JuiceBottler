@@ -84,9 +84,7 @@ public class Peeler implements Runnable {
         while (timeToWork) {
             Orange orange = fetchedMailBox.get();
             peelOrange(orange);
-//            System.out.println(Thread.currentThread().getName() + " Peeling oranges ");
         }
-//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**

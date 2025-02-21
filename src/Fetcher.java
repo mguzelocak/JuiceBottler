@@ -79,10 +79,8 @@ public class Fetcher implements Runnable {
             Orange orange = new Orange();
             orange.runProcess();
             fetchedMailBox.put(orange);
-//            System.out.println(Thread.currentThread().getName() + " Fetching oranges ");
             orangesFetched++;
         }
-//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**

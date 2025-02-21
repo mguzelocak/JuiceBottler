@@ -73,9 +73,7 @@ public class Bottler implements Runnable {
         while (timeToWork) {
             Orange orange = squeezedMailBox.get();
             bottleOrange(orange);
-//            System.out.println(Thread.currentThread().getName() + " Bottling oranges ");
         }
-//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**

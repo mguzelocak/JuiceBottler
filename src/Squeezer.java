@@ -84,9 +84,7 @@ public class Squeezer implements Runnable {
         while (timeToWork) {
             Orange orange = peeledMailBox.get();
             squeezeOrange(orange);
-//            System.out.println(Thread.currentThread().getName() + " Squeezing oranges ");
         }
-//        System.out.println(Thread.currentThread().getName() + " Done");
     }
 
     /**

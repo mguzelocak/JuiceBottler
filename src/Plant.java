@@ -44,6 +44,7 @@ public class Plant implements Runnable {
     private int orangesProvided;
     private int orangesProcessed;
     private volatile boolean timeToWork;
+
     /**
      * Constructs a new Plant instance.
      *
@@ -86,19 +87,11 @@ public class Plant implements Runnable {
         int totalProcessed = 0;
         int totalBottles = 0;
         int totalWasted = 0;
-        int totalFetched = 0;
-        int totalSqueezed = 0;
-        int totalPeeled = 0;
-        int totalBottled = 0;
         for (Plant p : plants) {
             totalProvided += p.getProvidedOranges();
             totalProcessed += p.getProcessedOranges();
             totalBottles += p.getBottles();
             totalWasted += p.getWaste();
-            totalFetched += p.getFetchedOranges();
-            totalSqueezed += p.getSqueezedOranges();
-            totalPeeled += p.getPeeledOranges();
-            totalBottled += p.getOrangesBottled();
         }
         System.out.println("Total fetched/processed = " + totalProvided + "/" + totalProcessed);
         System.out.println("Created " + totalBottles + " bottles, wasted " + totalWasted + " oranges");
